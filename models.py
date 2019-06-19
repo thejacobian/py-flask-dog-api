@@ -18,6 +18,5 @@ class Dog(Model):
 
 def initialize():
   DATABASE.connect()
-  DATABASE.create_tables([Dog], safe=True)
+  DATABASE.create_tables([Dog], safe=True) # safe=True prevents re-write of data on each connection
   DATABASE.close()
-
