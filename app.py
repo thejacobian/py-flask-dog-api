@@ -1,24 +1,28 @@
-from flask import Flask, jsonify, render_template
+from flask import Flask, g
+import models
+
+PORT = 5000
+DEBUG = True
 
 app = Flask(__name__)
-PORT = 5000
 
-# default/home route
+@app.before_request
+def before_request():
+  """connect to the database before each request"""
+  g.db = models.DATABASE
+  g.db.connect()
+
+@app.after_request()
+def after_request(response):
+  """close the database connection after each request"""
+  g.db.close()
+  return response
+
+# default/home/index route
 @app.route('/') #decorator @
 def index():
   return 'Hello, World!'
 
-@app.route('/json')
-def dog():
-  return jsonify(name="Frankie", age=8)
-
-@app.route('/sayhi/<username>')
-def hello(username):
-  return "Hello {}".format(username)
-
-@app.route('/greeting')
-def home():
-  return render_template("index.j2", greeting="something")
-
 if __name__ == '__main__':
-    app.run(debug=True, port=PORT)
+  models.initialize()
+  app.run(debug=DEBUG, port=PORT)
