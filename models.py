@@ -2,7 +2,6 @@ import datetime
 
 # peewee is our ORM Object Relational Model
 # gives the model the power to talk to Postgres SQL
-# peewee is a bit like mongoose
 from peewee import *
 
 DATABASE = SqliteDatabase('dogs.sqlite')
