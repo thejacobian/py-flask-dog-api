@@ -37,30 +37,21 @@ class DogList(Resource):
     )
     super().__init__()
       
-@marshal_with(dog_fields)
-def get(self, id):
-  try:
-    dog = models.Dog.get(models.Dog.id==id)
-  except models.Dog.DoesNotExist:
-    abort(404)
-  else:
-    return (dog, 200)
-  # return jsonify({'dogs': [{'name': 'Archie'}]})
+  def get(self):
+    # models.Dog.select() ## Look up peewee queries
+    # for Generating response object
+    # marshal in flask
+    dogs_list = [marshal(dog, dog_fields) for dog in models.Dog.select()]
+    return dogs_list
+    # return jsonify({'dogs': [{'name': 'Archie'}]})
 
-@marshal_with(dog_fields)
-def put(self, id):
-  args = self.reqparse.parse_args()
-  query = models.Dog.update(**args).where(models.Dog.id==id)
-  query.execute()
-  print(query, "<-- this is query")
-  return (models.Dog.get(models.Dog.id==id), 200)
-
-@marshal_with(dog_fields)
-def post(self):
-  args = self.reqparse.parse_args()
-  print(args, 'hittingggg post')
-  dog = models.Dog.create(**args)
-  return dog
+  @marshal_with(dog_fields)
+  def post(self):
+    args = self.reqparse.parse_args()
+    print(args, 'hittingggg post')
+    dog = models.Dog.create(**args)
+    print(dog, "<---", type(dog))
+    return (dog, 201)
 
 class Dog(Resource):
   def __init__(self):
