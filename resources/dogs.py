@@ -5,7 +5,7 @@ from flask_restful import (Resource, Api, reqparse, fields, marshal,
 
 import models
 
-## Marshal fields on responses
+## Marshal fields on responses, these are the fields we send back to the client
 dog_fields = {
     'id': fields.Integer,
     'name': fields.String,
@@ -95,15 +95,11 @@ class Dog(Resource):
     print(query, "<-- this is query")
     return (models.Dog.get(models.Dog.id==id), 200)
 
-  @marshal_with(dog_fields)
-  def post(self):
-    args = self.reqparse.parse_args()
-    print(args, 'hittingggg post')
-    dog = models.Dog.create(**args)
-    return dog
 
-    def delete(self, id):
-      return jsonify({'name': 'Archie'})
+  def delete(self, id):
+    query = models.Dog.delete().where(models.Dog.id==id)
+    query.execute()
+    return jsonify({'message': 'resource deleted'})
 
 dogs_api = Blueprint('resources.dogs', __name__)
 api = Api(dogs_api)
