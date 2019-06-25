@@ -55,7 +55,17 @@ class UserList(Resource):
                 'error': 'Password and password verification do not match'
             }), 400)
 
+    # @login_required
+    # def get(self):
+    #     dogs = [marshal(dog, dog_fields)
+    #             for dog in models.Dog.select()]
+    #     return {'dogs': dogs}
 
+    # @login_required
+    def get(self):
+        users = [marshal(user, user_fields)
+                for user in models.User.select()]
+        return {'users': users}
 
 users_api = Blueprint('resources.users', __name__)
 api = Api(users_api)
