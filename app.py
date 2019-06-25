@@ -29,6 +29,18 @@ CORS(users_api, origins= ["http://localhost:3000"], supports_credentials=True)
 app.register_blueprint(dogs_api, url_prefix='/api/v1')
 app.register_blueprint(users_api, url_prefix='/api/v1')
 
+@app.before_request
+def before_request():
+  """connect to the database before each request"""
+  g.db = models.DATABASE
+  g.db.connect()
+
+@app.after_request
+def after_request(response):
+  """close the database connection after each request"""
+  g.db.close()
+  return response
+
 # default/home/index route
 @app.route('/') #decorator @
 def index():

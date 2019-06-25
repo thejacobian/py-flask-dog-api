@@ -3,6 +3,7 @@ from flask import jsonify, Blueprint, abort
 from flask_restful import (Resource, Api, reqparse, fields, marshal,
                                marshal_with, url_for)
 
+from flask_login import login_required, current_user
 import models
 
 ## Marshal fields on responses, these are the fields we send back to the client
@@ -36,7 +37,7 @@ class DogList(Resource):
       location=['form', 'json']
     )
     super().__init__()
-      
+  
   def get(self):
     # models.Dog.select() ## Look up peewee queries
     # for Generating response object
@@ -45,6 +46,7 @@ class DogList(Resource):
     return dogs_list
     # return jsonify({'dogs': [{'name': 'Archie'}]})
 
+  @login_required
   @marshal_with(dog_fields)
   def post(self):
     args = self.reqparse.parse_args()
@@ -77,6 +79,7 @@ class Dog(Resource):
 
     super().__init__()
 
+  @login_required
   @marshal_with(dog_fields)
   def get(self, id):
     try:
@@ -87,6 +90,7 @@ class Dog(Resource):
       return (dog, 200)
     # return jsonify({'dogs': [{'name': 'Archie'}]})
 
+  @login_required
   @marshal_with(dog_fields)
   def put(self, id):
     args = self.reqparse.parse_args()
@@ -95,7 +99,7 @@ class Dog(Resource):
     print(query, "<-- this is query")
     return (models.Dog.get(models.Dog.id==id), 200)
 
-
+  @login_required
   def delete(self, id):
     query = models.Dog.delete().where(models.Dog.id==id)
     query.execute()

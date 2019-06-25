@@ -11,8 +11,9 @@ import models
 
 user_fields = {
     'username': fields.String,
+    'password': fields.String,
+    'email': fields.String
 }
-
 
 class UserList(Resource):
     def __init__(self):
@@ -61,7 +62,7 @@ class UserList(Resource):
     #             for dog in models.Dog.select()]
     #     return {'dogs': dogs}
 
-    # @login_required
+    @login_required
     def get(self):
         users = [marshal(user, user_fields)
                 for user in models.User.select()]
